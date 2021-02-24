@@ -1,0 +1,136 @@
+<aura:component controller="DataTableApexClass" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction,lightning:actionOverride"  access="global" >
+    <aura:attribute name="allData" type="List" />
+    <aura:attribute name="filteredData" type="List" />
+    <aura:attribute name="tableData" type="List" />
+    <aura:attribute name="columns" type="Object[]" />
+    <aura:attribute name="accountList" type="Account[]" />    
+    <aura:attribute name="selectedRowsCount" type="Integer" default="0"/>
+    <aura:attribute name="maxRowSelection" type="Integer" default="5"/>
+    <aura:attribute name="GrossBalanceValue" type="currency" default="0"/>
+    
+    <aura:attribute name="pageSize" type="Integer" default="15" />
+    <aura:attribute name="pageSizeOptions" type="Integer[]" default="10,15,20,25,50,100" />
+    <aura:attribute name="currentPageNumber" type="Integer" default="1" />
+    <aura:attribute name="totalPages" type="Integer" default="1" />
+    <aura:attribute name="searchPhrase" type="String" />    
+    <aura:attribute name="isLoading" type="Boolean" default="false" />
+    
+    <aura:handler name="init" value="{! this }" action="{! c.doInit }" />
+    
+    <aura:if isTrue="{! v.isLoading }">
+        <lightning:spinner alternativeText="Loading" />
+    </aura:if>
+    
+    <lightning:card title ="GIT DATA">
+        <lightning:layout multipleRows="true"> 
+            <lightning:layoutItem size="12" flexibility="auto" padding="horizontal-small">  
+                <div class="slds-p-around_small slds-grid slds-grid_align-spread slds-grid_vertical-align-start ">
+                    <div class="slds-float_right">  
+                        <lightning:select
+                                          label="Number of records on page:"
+                                          value="{! v.pageSize }"
+                                          onchange="{! c.onPageSizeChange }">
+                            <aura:iteration items="{! v.pageSizeOptions }" var="opt">
+                                <option text="{! opt }"></option>
+                            </aura:iteration>
+                        </lightning:select>
+                    </div>
+
+                </div>
+            </lightning:layoutItem>
+        </lightning:layout>
+        <div class="slds-p-around_small slds-grid slds-grid_align-spread slds-grid_vertical-align-start" style="height: 320px;">
+            
+            <lightning:datatable
+                                 aura:id="table"
+                                 columns="{! v.columns }"
+                                 data="{! v.tableData }"
+                                 hideCheckboxColumn="false"
+                                 keyField="Id" 
+                                 maxRowSelection="{! v.maxRowSelection }"
+                                 onrowselection="{! c.updateSelectedText }"/>
+        </div>
+        
+        <br></br>        
+        <lightning:layout multipleRows="true"> 
+            <lightning:layoutItem size="6" flexibility="auto" padding="horizontal-small">  
+                <div class="slds-float_left">
+                    <lightning:button
+                                      label="Add Debit"
+                                      variant="brand"
+                                      iconPosition="left"
+                                       />
+                    
+                    <lightning:button
+                                      label="Remove Debit"
+                                      variant="brand"
+                                      iconPosition="left"
+                                      />
+                </div>
+            </lightning:layoutItem>
+            <lightning:layoutItem size="6" flexibility="auto" padding="horizontal-small">  
+            </lightning:layoutItem>
+            
+            <br></br>
+            <br></br>
+            
+            <lightning:layoutItem size="12" flexibility="auto" padding="horizontal-small" >                    
+                <div   class= 'LightBlue' >
+                    
+                    <div class= "slds-border_right">
+                        Total     {! (v.allData.length) }</div>
+                </div>
+            </lightning:layoutItem>
+            
+            <br></br>
+            <br></br>
+            
+            <lightning:layoutItem size="3" flexibility="auto" padding="horizontal-small">                
+                <span class="slds-var-p-horizontal_x-small">
+                    Total Row Count: {! (v.filteredData.length) }         
+                </span>
+            </lightning:layoutItem>            
+            <lightning:layoutItem size="3" flexibility="auto" padding="horizontal-small">              
+                <span class="slds-var-p-horizontal_x-small">
+                    Check Row Count: {! v.selectedRowsCount }
+                </span>
+            </lightning:layoutItem>
+            <lightning:layoutItem size="6" flexibility="auto" padding="horizontal-small">
+                <div class="slds-float_right">  
+                    <lightning:button
+                                      label="First"
+                                      variant="brand"                                      
+                                      iconName="utility:left"
+                                      iconPosition="left"
+                                      onclick="{! c.onFirst }"
+                                      disabled="{! v.currentPageNumber == 1 }" />
+                    <lightning:button
+                                      label=""
+                                      variant="brand"                                      
+                                      iconName="utility:chevronleft"
+                                      iconPosition="left"
+                                      onclick="{! c.onPrev }"
+                                      disabled="{! v.currentPageNumber == 1 }" />
+                    <span class="slds-var-p-horizontal_x-small">
+                        Page {! (v.currentPageNumber) } of {! (v.totalPages) }
+                    </span>
+                    <lightning:button
+                                      label=""
+                                      variant="brand"                                      
+                                      iconName="utility:chevronright"
+                                      iconPosition="right"
+                                      onclick="{! c.onNext }"
+                                      disabled="{! v.currentPageNumber == v.totalPages }" />
+                    <lightning:button
+                                      label="Last"
+                                      variant="brand"                                      
+                                      iconName="utility:right"
+                                      iconPosition="right"
+                                      onclick="{! c.onLast }"        
+                                      disabled="{! v.currentPageNumber == v.totalPages }" />
+                </div>
+            </lightning:layoutItem>   
+        </lightning:layout>
+        
+    </lightning:card>
+</aura:component>
