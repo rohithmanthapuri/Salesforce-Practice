@@ -1,0 +1,46 @@
+<template>
+    <lightning-card title="TEST data from JSON" icon-name="custom:custom14">
+      <div class="slds-m-around_medium">
+        <p>Test data from JSON, </p>
+        <template if:true={dataList.data}>
+            test
+            <table>
+                    <th><lightning-input type="checkbox"  data-id="parent-checkbox"  label="checkbox" onclick={handleChangeforAll}></lightning-input></th>
+                    <th>Creditor</th>
+                    <th>First name</th>
+                    <th>Last Name</th>
+                    <th>Min Pay %</th>
+                    <th>Balance</th>
+                </tr>
+
+                <template for:each={dataList.data} for:item="wrapper">
+                    <!--<p key={wrapper.accountId}>{wrapper.accountName}</p>-->
+                    <tr key={wrapper.id}>
+                        <td>
+                            <lightning-input type="checkbox"  data-id="checkbox" id={wrapper.id} value={wrapper.balance} label="checkbox" onclick={handleChange}></lightning-input>
+                        </td>
+                        <td>{wrapper.creditorName}</td>
+                        <td>{wrapper.firstName}</td>
+                        <td>{wrapper.lastName}</td>
+                        <td>{wrapper.minPaymentPercentage}</td>
+                        <td>{wrapper.balance}</td>
+                    </tr>
+                
+                </template>
+            </table>
+            
+        </template>
+        <div class="totalCount">
+            <span>Selected: {selectedCount}</span>
+            <span style="float:right;">Selected Amount: {amountSelected}</span>
+        </div>
+        Total Row Count: {totalCount}
+        
+        <div>
+            <span class="button" onclick={AddInRow}>Add</span>
+        </div>
+        <!--<p>Hello, {greeting}!</p>
+        <lightning-input label="Name" value={greeting} onchange={changeHandler}></lightning-input>-->
+      </div>
+    </lightning-card>
+  </template>
